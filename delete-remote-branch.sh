@@ -1,15 +1,6 @@
 #!/bin/bash
 
-# An interactive script that allows you to delete multiple remote branches from
-# a git repository with confirmation before deletion.
-#
-# Provide the path to the git repo as an argument to the script or it will
-# prompt you for the path to the repo
-#
-# @version 0.1
-# @author Evan Reeves <develop@evanreeves.com>
-#
-
+# Check repository
 if [ ! $# == 1 ]; then
   echo -n "No path provided. Enter path to git repository: "
   read GITPATH
