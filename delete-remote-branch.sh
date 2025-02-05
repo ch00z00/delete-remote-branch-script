@@ -1,65 +1,19 @@
 #!/bin/bash
 
-# Check repository
-if [ ! $# == 1 ]; then
-  echo -n "No path provided. Enter path to git repository: "
-  read GITPATH
-else
-  GITPATH=$1
+if [ -z "$1" ]; then
+  echo "Usage: $0 <grep_string>"
+  exit 1
 fi
 
-if [ ! -d $GITPATH ]; then
-  echo "'$GITPATH' does not exist"
-    exit 0
-  fi
+grep_string="$1"
 
-cd $GITPATH
+echo -e "\033[33mFetching remote branches...\033[0m"
 
-BRANCHES=()
-# Remove origin/HEAD and ''
-let ctr=0
-for i in `git branch -r`; do
-  i=`echo "$i" | sed 's/^ *//g' `
-  if [[ ! $i =~ HEAD ]] && [[ ! $i =~ '->' ]]; then
-    BRANCHES=( "${BRANCHES[@]}" $i)
-  fi
-  let ctr++
-done
+git fetch
 
-run=true
-while( $run ); do
-  let ctr=1
-  while [ $ctr -le ${#BRANCHES[@]} ]; do
-    echo "$ctr. ${BRANCHES[$ctr-1]}"
-    let ctr++
-  done
+echo -e "\n \033[32mDeleting remote branches...\033[0m"
 
-  echo -n "Enter number of branch(es) to delete (enter Q to quit): "
-  read -a remove
-  echo ""
+git branch -r | grep "origin/$grep_string" | sed 's/origin\///' | xargs -I {} git push origin :{}
 
-  if [ ${remove[0]} = "Q" ] || [ ${remove[0]} = "q" ]; then
-    exit 0
-  fi
+echo -e "\n Deleted remote branch matches $grep_string ✨"
 
-  let ctr=1
-  for i in ${remove[@]}; do
-    echo "$ctr. ${BRANCHES[$i-1]}"
-    let ctr++
-  done
-
-  echo -n "Really delete the these branches? [Y/n]: "
-  read confirm
-  echo ""
-
-  if [ $confirm = "Y" ] || [ $confirm = "y" ]; then
-    for i in ${remove[@]}; do
-      cmd=`echo ${BRANCHES[$i-1]} | awk '{sub(/origin\//, ""); print "git push origin :"$1 " && git branch -D "$1}'`
-      echo $cmd
-      echo $cmd | /bin/sh
-      unset BRANCHES[$i-1]
-    done
-    echo ""
-  fi
-  BRANCHES=( "${BRANCHES[@]}" )
-done
