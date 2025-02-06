@@ -5,5 +5,6 @@ This is shell script to delete remote branch in specific repository.
 Tentatively, `delete-remote-branch.sh` is the stable version of the script.
 
 
+### delete-remote-branch-revised.sh
 `delete-remote-branch-revised.sh` is experimantal one.
 Implementing progress bar while deleting branches.
