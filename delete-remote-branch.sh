@@ -11,7 +11,7 @@ echo -e "\033[33mFetching remote branches...\033[0m"
 
 git fetch
 
-echo -e "\n \033[32mDeleting remote branches...\033[0m"
+echo -e "\n\033[32mDeleting remote branches...\033[0m"
 
 git branch -r | grep "origin/$grep_string" | sed 's/origin\///' | xargs -I {} git push origin :{}
 
